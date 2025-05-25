@@ -123,6 +123,10 @@ double& Vector:: operator()(int index){
     return mData[index - 1]; // vị trí đầu tiên là 0 nhưng mà bth ko biết thì coi vị trí đầu tiên là 1
 }
 
+double Vector:: operator[](int index) const{
+    return mData[index];
+}
+
 Vector operator*(double scalar, const Vector& v2){
     return v2 * scalar;
 };
