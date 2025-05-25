@@ -110,26 +110,28 @@ Matrix Matrix::operator*(double scalar) const {
     return scalar_mul_matrix;
 }
 
+// Row multiplication( matrix * vector )
 Vector operator*(const Matrix& m, const Vector& v){
     assert(m.getNumCols() == v.get_size());
     Vector result(m.getNumRows());
     for(int i = 0; i < m.getNumRows(); i++){
         double sum = 0;
         for(int j = 0; j < m.getNumCols(); j++){
-            sum += m.get(i,j) * v[j];
+            sum += m.getData(i,j) * v[j];
         }
         result[i] = sum;
     }
     return result;
 }
 
+// Col multiplication (vector * matrix)
 Vector operator*(const Vector& v, const Matrix& m){
     assert(v.get_size() == m.getNumRows());
     Vector result(m.getNumCols());
     for(int i = 0; i < m.getNumCols(); i++){
         double sum = 0;
         for(int j = 0; j < m.getNumRows(); j++){
-            sum += v[j] * m.get(j,i);
+            sum += v[j] * m.getData(j,i);
         }
         result[i] = sum;
     }
@@ -341,6 +343,6 @@ int main() {
     // Test pseudo-inverse (check)
     Matrix pinv = detMat.pseudo_inverse();
     std::cout << "Pseudo-inverse pinv(1,1): " << pinv(1, 1) << std::endl;
-    
+
     return 0;
 }

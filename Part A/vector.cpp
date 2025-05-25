@@ -142,7 +142,8 @@ void printVector(const Vector& v, string name) {
     cout << "]" << endl;
 }
 
-// // Testing code provided by chatgpt
+
+// Testing code provided by chatgpt, uncomment to test the each function
 // int main(){
 //     // Test default constructor
 //     cout << "Testing default constructor:" << endl;
@@ -278,4 +279,3 @@ void printVector(const Vector& v, string name) {
 
 //     return 0;
 // }
-

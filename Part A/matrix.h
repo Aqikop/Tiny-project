@@ -15,7 +15,7 @@ public:
     ~Matrix();
     int getNumRows() const;
     int getNumCols() const;
-    int get(int row, int col) const { return mData[row][col];}
+    int getData(int row, int col) const { return mData[row][col];}
     double &operator()(int, int);
 
     Matrix operator+() const;
