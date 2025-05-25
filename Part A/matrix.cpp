@@ -235,6 +235,7 @@ Matrix Matrix::tranpose() const {
     }
     return trans_matrix;
 }
+// Pseudo inverse (Ref: chat GPT)
 Matrix Matrix::pseudo_inverse() const {
     if (mNumRows >= mNumCols) {
         // Tall or square matrix: A⁺ = (AᵀA)⁻¹Aᵀ
@@ -261,7 +262,6 @@ Matrix Matrix::pseudo_inverse() const {
         return A_trans * AAt_inv;
     }
 }
-
 
 
 //Testing code provided by chatgpt, uncomment to test the each function
