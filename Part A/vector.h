@@ -28,6 +28,9 @@ class Vector{
 
         double& operator[](int index);
         double& operator()(int index);
+        double operator[](int index) const {
+            return mData[index];
+        }
 
         int get_size() const{
             return mSize;
