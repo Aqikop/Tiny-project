@@ -46,9 +46,9 @@ using namespace std;
 Matrix::Matrix (const Matrix& matrix){
     mNumRows = matrix.mNumRows;
     mNumCols = matrix.mNumCols;
-    mData = new int*[mNumRows];
+    mData = new double*[mNumRows];
     for (int i = 0; i < mNumRows; i++){
-        mData[i] = new int[mNumCols];
+        mData[i] = new double[mNumCols];
         for (int j = 0; j < mNumCols; j++){
             mData[i][j] = matrix.mData[i][j];
         }
@@ -58,9 +58,9 @@ Matrix::Matrix (const Matrix& matrix){
 Matrix::Matrix(const int a, const int b){
     mNumRows = a;
     mNumCols = b;
-    mData = new int*[mNumRows];
+    mData = new double*[mNumRows];
     for (int i = 0; i <mNumRows; i++){
-        mData[i] = new int[mNumCols];
+        mData[i] = new double[mNumCols];
         for (int j = 0; j < mNumCols; j++){
             mData[i][j] = 0;
         }
@@ -81,7 +81,7 @@ int Matrix::getNumCols() const{
     return mNumCols;
 }
 // Overloadding Operator: ()
-int &Matrix::operator()(int row, int col){
+double &Matrix::operator()(int row, int col){
     return mData[row - 1][col - 1];
 }
 // Overloadding Operator: =
@@ -125,11 +125,12 @@ Matrix Matrix::operator-(const Matrix & matrix) const{
 //Multiplication *: With matrix, scalar and vector;
 Matrix Matrix::operator*(const Matrix & matrix) const{
     assert(mNumCols == matrix.mNumRows);
-    Matrix mul_matrix(mNumRows, mNumCols);
+    Matrix mul_matrix(mNumRows, matrix.mNumCols);
     for (int i = 0; i < mNumRows; i++){
         for (int j = 0; j < matrix.mNumCols; j++){
+            mul_matrix.mData[i][j] = 0;
             for (int k = 0; k < mNumCols; k++){
-                mData[i][j] += mData[i][k] * matrix.mData[k][j];
+                mul_matrix.mData[i][j] += mData[i][k] * matrix.mData[k][j];
             }
         }
     }
@@ -260,7 +261,7 @@ Matrix Matrix::inverse() const {
     }
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
-            inv.mData[i][j] = static_cast<int>(aug[i][j + n]);
+            inv.mData[i][j] = (aug[i][j + n]);
         }
     }
     for (int i = 0; i < n; ++i) delete[] aug[i];
@@ -270,7 +271,7 @@ Matrix Matrix::inverse() const {
 
 //Tranpose
 Matrix Matrix::tranpose() const {
-    Matrix trans_matrix(mNumRows, mNumCols);
+    Matrix trans_matrix(mNumCols, mNumRows);
     for (int i = 0; i < mNumRows; i++){
         for (int j = 0; j < mNumCols; j++){
             trans_matrix.mData[j][i] = mData[i][j];
@@ -279,16 +280,35 @@ Matrix Matrix::tranpose() const {
     return trans_matrix;
 }
 Matrix Matrix::pseudo_inverse() const {
-    assert(mNumRows >= mNumCols); 
-    Matrix A_trans = this->tranpose(); 
-    Matrix AtA = A_trans * (*this);    
-    Matrix AtA_inv = AtA.inverse(); 
-    Matrix pinv = AtA_inv * A_trans;   
-    return pinv;
+    if (mNumRows >= mNumCols) {
+        // Tall or square matrix: A⁺ = (AᵀA)⁻¹Aᵀ
+        Matrix A_trans = this->tranpose();
+        Matrix AtA = A_trans * (*this);
+        
+        if (fabs(AtA.determinant()) < 1e-12) {
+            std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
+            return Matrix(mNumCols, mNumRows);
+        }
+        
+        Matrix AtA_inv = AtA.inverse();
+        return AtA_inv * A_trans;
+    } 
+    else {
+        // Wide matrix: A⁺ = Aᵀ(AAᵀ)⁻¹
+        Matrix A_trans = this->tranpose();
+        Matrix AAt = (*this) * A_trans;
+        
+        if (fabs(AAt.determinant()) < 1e-12) {
+            std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
+            return Matrix(mNumCols, mNumRows);
+        }
+        
+        Matrix AAt_inv = AAt.inverse();
+        return A_trans * AAt_inv;
+    }
 }
 
 
-// ...existing code...
 
 int main() {
     // Test constructor and getNumRows/getNumCols
@@ -362,16 +382,77 @@ int main() {
 
     // Test inverse (check)
     Matrix invMat = detMat.inverse();
-    std::cout << "Inverse invMat(1,1): " << invMat(1, 1) << std::endl;
+    std::cout << "Inverse invMat(2,1): " << invMat(2, 1) << std::endl;
 
     // Test transpose
     Matrix tMat = detMat.tranpose();
     std::cout << "Transpose tMat(1,2): " << tMat(1, 2) << std::endl;
 
     // Test pseudo-inverse (check)
-    Matrix pinv = detMat.pseudo_inverse();
-    std::cout << "Pseudo-inverse pinv(1,1): " << pinv(1, 1) << std::endl;
+    // Test case for pseudo-inverse
+    Matrix tall(3, 2); // 3×2 matrix
+    tall(1, 1) = 1; tall(1, 2) = 2;
+    tall(2, 1) = 3; tall(2, 2) = 4;
+    tall(3, 1) = 5; tall(3, 2) = 6;
+
+    std::cout << "\nTesting pseudo-inverse of tall matrix (3×2):\n";
+    std::cout << "Original matrix:\n";
+    for(int i = 1; i <= 3; i++) {
+        for(int j = 1; j <= 2; j++) {
+            std::cout << tall(i,j) << " ";
+        }
+        std::cout << "\n";
+    }
+
+    Matrix tall_pinv = tall.pseudo_inverse(); // Should be 2×3
+
+    std::cout << "\nPseudo-inverse (2x3):\n";
+    for(int i = 1; i <= 2; i++) {
+        for(int j = 1; j <= 3; j++) {
+            std::cout << tall_pinv(i,j) << " ";
+        }
+        std::cout << "\n";
+    }
+
+
+    // Test wide matrix pseudo-inverse
+    std::cout << "\nTesting pseudo-inverse of wide matrix (2x4):\n";
+    Matrix wide(2, 4);  // 2x4 matrix (wide)
+    wide(1, 1) = 1; wide(1, 2) = 2; wide(1, 3) = 3; wide(1, 4) = 4;
+    wide(2, 1) = 5; wide(2, 2) = 6; wide(2, 3) = 7; wide(2, 4) = 8;
+
+    std::cout << "Original matrix:\n";
+    for(int i = 1; i <= 2; i++) {
+        for(int j = 1; j <= 4; j++) {
+            std::cout << wide(i,j) << " ";
+        }
+        std::cout << "\n";
+    }
+
+    // For wide matrix, use transpose trick
+    Matrix wide_t = wide.tranpose();  // Now 4x2 (tall)
+    Matrix wide_t_pinv = wide_t.pseudo_inverse();  // Get 2x4
+    Matrix wide_pinv = wide_t_pinv.tranpose();  // Get 4x2
+
+    std::cout << "\nPseudo-inverse (4x2):\n";
+    for(int i = 1; i <= 4; i++) {
+        for(int j = 1; j <= 2; j++) {
+            std::cout << wide_pinv(i,j) << " ";
+        }
+        std::cout << "\n";
+    }
+
+    // Test A * A⁺ * A = A property
+    Matrix verify_wide = wide * wide_pinv * wide;
+    std::cout << "\nVerifying A * A⁺ * A = A:\n";
+    for(int i = 1; i <= 2; i++) {
+        for(int j = 1; j <= 4; j++) {
+            std::cout << verify_wide(i,j) - wide(i,j) << " ";  // Should be close to 0
+        }
+        std::cout << "\n";
+    }
+
+    
 
     return 0;
 }
-// ...existing code...
