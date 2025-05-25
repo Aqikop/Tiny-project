@@ -2,6 +2,7 @@
 #define MATRIX_H
 
 #include <vector>
+#include "vector.h"
 
 class Matrix {
 private:
@@ -14,6 +15,7 @@ public:
     ~Matrix();
     int getNumRows() const;
     int getNumCols() const;
+    int getData(int row, int col) const { return mData[row][col];}
     int &operator()(int, int);
 
     Matrix operator+() const;
@@ -22,11 +24,13 @@ public:
     Matrix operator-(const Matrix&) const;
     Matrix operator*(const Matrix&) const;
     Matrix operator*(double) const;
-    Matrix operator*(const int*) const;
+    //Matrix operator*(const int*) const;
     double determinant() const;
     Matrix inverse() const;
     Matrix tranpose() const;
     Matrix pseudo_inverse() const;
 };
+Vector operator*(const Matrix& m, const Vector& v); //row mul
+Vector operator*(const Vector& v, const Matrix& m); //col mul
 
 #endif 
