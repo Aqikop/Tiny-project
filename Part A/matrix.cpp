@@ -6,42 +6,6 @@
 #include "vector.h"
 using namespace std;
 
-// class Matrix{
-//     private:
-//         int mNumRows;
-//         int mNumCols;
-//         int **mData;
-//     public:
-//         //Destructor: Free all the memory
-//         Matrix(const Matrix&);
-//         // Constructor accepts two integers
-//         Matrix(const int, const int);
-//         //Destructor: Free all the memory
-//         ~Matrix();
-//         //# of Rows Getter + # of Columns Getter
-//         int getNumRows() const;
-//         int getNumCols() const;
-//         //Overloadding Operator: ()
-//         int &operator()(int, int);
-//         // Unary Operator: +, -
-//         Matrix operator+() const;
-//         Matrix operator-() const;
-//         // Binary Operator: +, -
-//         Matrix operator+(const Matrix&) const;
-//         Matrix operator-(const Matrix&) const;
-//         // Multiplication (with Matrix, Scalar, Vector)
-//         Matrix operator*(const Matrix&) const;
-//         Matrix operator*(double) const;
-//         Matrix Matrix::operator*(const int* ) const;
-//         //Determinant
-//         double determinant() const;
-//         //Inverse
-//         Matrix inverse() const;
-//         // Transpose
-//         Matrix tranpose() const;
-//         //Pseudo-inverse (Moore-Penrose)
-//         Matrix pseudo_inverse() const;
-// };
 // Copy Constructor
 Matrix::Matrix (const Matrix& matrix){
     mNumRows = matrix.mNumRows;
@@ -145,17 +109,7 @@ Matrix Matrix::operator*(double scalar) const {
     }
     return scalar_mul_matrix;
 }
-// Matrix Matrix::operator*(const int* vec) const {
-//     assert(mNumCols == 1); 
-//     Matrix vec_mul_matrix(mNumRows, 1);
-//     for (int i = 0; i < mNumRows; i++) {
-//         vec_mul_matrix.mData[i][0] = 0;
-//         for (int j = 0; j < mNumCols; j++) {
-//             vec_mul_matrix.mData[i][0] += mData[i][j] * vec[j];
-//         }
-//     }
-//     return vec_mul_matrix;
-// }
+
 Vector operator*(const Matrix& m, const Vector& v){
     assert(m.getNumCols() == v.get_size());
     Vector result(m.getNumRows());
@@ -289,7 +243,6 @@ Matrix Matrix::pseudo_inverse() const {
             std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
             return Matrix(mNumCols, mNumRows);
         }
-        
         Matrix AtA_inv = AtA.inverse();
         return AtA_inv * A_trans;
     } 
@@ -302,13 +255,10 @@ Matrix Matrix::pseudo_inverse() const {
             std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
             return Matrix(mNumCols, mNumRows);
         }
-        
         Matrix AAt_inv = AAt.inverse();
         return A_trans * AAt_inv;
     }
 }
-
-
 
 int main() {
     // Test constructor and getNumRows/getNumCols
@@ -389,70 +339,8 @@ int main() {
     std::cout << "Transpose tMat(1,2): " << tMat(1, 2) << std::endl;
 
     // Test pseudo-inverse (check)
-    // Test case for pseudo-inverse
-    Matrix tall(3, 2); // 3×2 matrix
-    tall(1, 1) = 1; tall(1, 2) = 2;
-    tall(2, 1) = 3; tall(2, 2) = 4;
-    tall(3, 1) = 5; tall(3, 2) = 6;
-
-    std::cout << "\nTesting pseudo-inverse of tall matrix (3×2):\n";
-    std::cout << "Original matrix:\n";
-    for(int i = 1; i <= 3; i++) {
-        for(int j = 1; j <= 2; j++) {
-            std::cout << tall(i,j) << " ";
-        }
-        std::cout << "\n";
-    }
-
-    Matrix tall_pinv = tall.pseudo_inverse(); // Should be 2×3
-
-    std::cout << "\nPseudo-inverse (2x3):\n";
-    for(int i = 1; i <= 2; i++) {
-        for(int j = 1; j <= 3; j++) {
-            std::cout << tall_pinv(i,j) << " ";
-        }
-        std::cout << "\n";
-    }
-
-
-    // Test wide matrix pseudo-inverse
-    std::cout << "\nTesting pseudo-inverse of wide matrix (2x4):\n";
-    Matrix wide(2, 4);  // 2x4 matrix (wide)
-    wide(1, 1) = 1; wide(1, 2) = 2; wide(1, 3) = 3; wide(1, 4) = 4;
-    wide(2, 1) = 5; wide(2, 2) = 6; wide(2, 3) = 7; wide(2, 4) = 8;
-
-    std::cout << "Original matrix:\n";
-    for(int i = 1; i <= 2; i++) {
-        for(int j = 1; j <= 4; j++) {
-            std::cout << wide(i,j) << " ";
-        }
-        std::cout << "\n";
-    }
-
-    // For wide matrix, use transpose trick
-    Matrix wide_t = wide.tranpose();  // Now 4x2 (tall)
-    Matrix wide_t_pinv = wide_t.pseudo_inverse();  // Get 2x4
-    Matrix wide_pinv = wide_t_pinv.tranpose();  // Get 4x2
-
-    std::cout << "\nPseudo-inverse (4x2):\n";
-    for(int i = 1; i <= 4; i++) {
-        for(int j = 1; j <= 2; j++) {
-            std::cout << wide_pinv(i,j) << " ";
-        }
-        std::cout << "\n";
-    }
-
-    // Test A * A⁺ * A = A property
-    Matrix verify_wide = wide * wide_pinv * wide;
-    std::cout << "\nVerifying A * A⁺ * A = A:\n";
-    for(int i = 1; i <= 2; i++) {
-        for(int j = 1; j <= 4; j++) {
-            std::cout << verify_wide(i,j) - wide(i,j) << " ";  // Should be close to 0
-        }
-        std::cout << "\n";
-    }
-
+    Matrix pinv = detMat.pseudo_inverse();
+    std::cout << "Pseudo-inverse pinv(1,1): " << pinv(1, 1) << std::endl;
     
-
     return 0;
 }
