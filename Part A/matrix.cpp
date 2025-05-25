@@ -89,11 +89,12 @@ Matrix Matrix::operator-(const Matrix & matrix) const{
 //Multiplication *: With matrix, scalar and vector;
 Matrix Matrix::operator*(const Matrix & matrix) const{
     assert(mNumCols == matrix.mNumRows);
-    Matrix mul_matrix(mNumRows, mNumCols);
+    Matrix mul_matrix(mNumRows, matrix.mNumCols);
     for (int i = 0; i < mNumRows; i++){
         for (int j = 0; j < matrix.mNumCols; j++){
+            mul_matrix.mData[i][j] = 0;
             for (int k = 0; k < mNumCols; k++){
-                mData[i][j] += mData[i][k] * matrix.mData[k][j];
+                mul_matrix.mData[i][j] += mData[i][k] * matrix.mData[k][j];
             }
         }
     }
@@ -226,7 +227,7 @@ Matrix Matrix::inverse() const {
 
 //Tranpose
 Matrix Matrix::tranpose() const {
-    Matrix trans_matrix(mNumRows, mNumCols);
+    Matrix trans_matrix(mNumCols, mNumRows);
     for (int i = 0; i < mNumRows; i++){
         for (int j = 0; j < mNumCols; j++){
             trans_matrix.mData[j][i] = mData[i][j];
@@ -234,13 +235,32 @@ Matrix Matrix::tranpose() const {
     }
     return trans_matrix;
 }
+// Pseudo inverse (Ref: chat GPT)
 Matrix Matrix::pseudo_inverse() const {
-    assert(mNumRows >= mNumCols); 
-    Matrix A_trans = this->tranpose(); 
-    Matrix AtA = A_trans * (*this);    
-    Matrix AtA_inv = AtA.inverse(); 
-    Matrix pinv = AtA_inv * A_trans;   
-    return pinv;
+    if (mNumRows >= mNumCols) {
+        // Tall or square matrix: A⁺ = (AᵀA)⁻¹Aᵀ
+        Matrix A_trans = this->tranpose();
+        Matrix AtA = A_trans * (*this);
+        
+        if (fabs(AtA.determinant()) < 1e-12) {
+            std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
+            return Matrix(mNumCols, mNumRows);
+        }
+        Matrix AtA_inv = AtA.inverse();
+        return AtA_inv * A_trans;
+    } 
+    else {
+        // Wide matrix: A⁺ = Aᵀ(AAᵀ)⁻¹
+        Matrix A_trans = this->tranpose();
+        Matrix AAt = (*this) * A_trans;
+        
+        if (fabs(AAt.determinant()) < 1e-12) {
+            std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
+            return Matrix(mNumCols, mNumRows);
+        }
+        Matrix AAt_inv = AAt.inverse();
+        return A_trans * AAt_inv;
+    }
 }
 
 
