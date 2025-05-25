@@ -8,7 +8,7 @@ class Matrix {
 private:
     int mNumRows;
     int mNumCols;
-    int **mData;
+    double **mData;
 public:
     Matrix(const Matrix&);
     Matrix(const int, const int);
@@ -16,7 +16,7 @@ public:
     int getNumRows() const;
     int getNumCols() const;
     int get(int row, int col) const { return mData[row][col]; }
-    int &operator()(int, int);
+    double &operator()(int, int);
 
     Matrix operator+() const;
     Matrix operator-() const;
