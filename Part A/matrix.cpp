@@ -262,7 +262,10 @@ Matrix Matrix::pseudo_inverse() const {
     }
 }
 
-int main() {
+
+
+//Testing code provided by chatgpt, uncomment to test the each function
+int main(){
     // Test constructor and getNumRows/getNumCols
     Matrix m1(2, 3);
     std::cout << "Rows: " << m1.getNumRows() << ", Cols: " << m1.getNumCols() << std::endl;
@@ -334,7 +337,7 @@ int main() {
 
     // Test inverse (check)
     Matrix invMat = detMat.inverse();
-    std::cout << "Inverse invMat(2,1): " << invMat(2, 1) << std::endl;
+    std::cout << "Inverse invMat(1,1): " << invMat(1, 1) << std::endl;
 
     // Test transpose
     Matrix tMat = detMat.tranpose();
