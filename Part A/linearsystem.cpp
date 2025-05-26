@@ -7,7 +7,7 @@
 using namespace std;
 
 class LinearSystem {
-    private:
+    protected:
         int mSize;
         Matrix* mpA;
         Vector* mpb;
@@ -19,7 +19,7 @@ class LinearSystem {
         // Constructor requires matrix and vector
         LinearSystem(Matrix* A, Vector* b);
         // Solve method 
-        Vector Solve(); 
+        virtual Vector Solve(); 
 };
 
 LinearSystem::LinearSystem(Matrix* A, Vector* b) : mpA(A), mpb(b) {
@@ -27,7 +27,7 @@ LinearSystem::LinearSystem(Matrix* A, Vector* b) : mpA(A), mpb(b) {
     assert(A->getNumRows() == A->getNumCols());
 }
 //Solve Method: (Reference: Copilot)
-Vector LinearSystem::Solve() {
+Vector LinearSystem::Solve() { 
     int n = mSize;
     vector<std::vector<double>> a(n, vector<double>(n));
     Vector b = *mpb;
