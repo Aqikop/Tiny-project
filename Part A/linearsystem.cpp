@@ -1,26 +1,11 @@
 #include <iostream>
 #include "matrix.h"
 #include "vector.h"
+#include "linearsystem.h"
 #include <vector>
 #include <cassert>
 #include <math.h>
 using namespace std;
-
-class LinearSystem {
-    private:
-        int mSize;
-        Matrix* mpA;
-        Vector* mpb;
-        // Prevent copy constructor
-        LinearSystem(const LinearSystem&);
-    public:
-        // No default constructor
-        LinearSystem() = delete;
-        // Constructor requires matrix and vector
-        LinearSystem(Matrix* A, Vector* b);
-        // Solve method 
-        Vector Solve(); 
-};
 
 LinearSystem::LinearSystem(Matrix* A, Vector* b) : mpA(A), mpb(b) {
     mSize = A->getNumRows();
@@ -29,7 +14,7 @@ LinearSystem::LinearSystem(Matrix* A, Vector* b) : mpA(A), mpb(b) {
 //Solve Method: (Reference: Copilot)
 Vector LinearSystem::Solve() {
     int n = mSize;
-    vector<std::vector<double>> a(n, vector<double>(n));
+    vector<vector<double>> a(n, vector<double>(n));
     Vector b = *mpb;
     for (int i = 0; i < n; ++i) {
         b[i] = (*mpb)[i];
