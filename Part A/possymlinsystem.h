@@ -4,7 +4,7 @@
 #include "vector.h"
 #include "linearsystem.h"
 
-class PosSymLinSystem{
+class PosSymLinSystem: public LinearSystem{
     public:
     //solve using conjugate gradient method
     Vector Solve();
