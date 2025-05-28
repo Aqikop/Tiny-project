@@ -4,7 +4,7 @@
 #include "vector.h"
 
 class LinearSystem {
-private:
+protected:
     int mSize;
     Matrix* mpA;
     Vector* mpb;
@@ -12,7 +12,7 @@ private:
 public:
     LinearSystem() = delete; 
     LinearSystem(Matrix* A, Vector* b);
-    Vector Solve();
+    virtual Vector Solve();
 };
 
 #endif 
