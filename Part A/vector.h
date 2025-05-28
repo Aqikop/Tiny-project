@@ -30,10 +30,13 @@ class Vector{
         double& operator()(int index);
         double operator[](int index) const;
 
+        double magnitude() const;
+
         int get_size() const{
             return mSize;
         };
 };
 Vector operator*(double scalar, const Vector& other); // Scalar multiplication (v₁×a = a×v₁ = [a×b, a×c, a×d])
+double distance(const Vector& v1, const Vector& v2);
 
 #endif
