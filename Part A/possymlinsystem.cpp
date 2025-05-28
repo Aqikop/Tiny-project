@@ -31,7 +31,7 @@ Vector PosSymLinSystem::Solve(Vector x0 = Vector(mpb->mSize), int max_iters = 10
         //check stop
         //compute if |r0| < epsilon (very small)
         //r0.length < min => break;
-        if(r0.length() < min){break;}
+        if(r0.magnitude() < min){break;}
         else{
             beta = (r0*r0) / (r0_temp*r0_temp);
         p0 = r0 + beta*p0;
