@@ -7,6 +7,10 @@
 #include <math.h>
 using namespace std;
 
+PosSymLinSystem::PosSymLinSystem(Matrix* A, Vector* b) : mpA(A), mpb(b) {
+    mSize = A->getNumRows();
+    assert(A->getNumRows() == A->getNumCols());
+}
 Vector PosSymLinSystem::Solve(Vector x0 = Vector(mpb->mSize), int max_iters = 100, double min = 0.1) {
     //not implement yet
     Vector r0, p0, x0_temp, r0_temp;
