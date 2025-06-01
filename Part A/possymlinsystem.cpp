@@ -25,7 +25,7 @@ Vector PosSymLinSystem::Solve(Vector x0 = Vector(mpb->mSize), int max_iters = 10
         r0_temp = r0;
         //step size
         r0_dot = r0*r0;  //r0.T * r0
-        alpha = r0_dot / ((mpA*p0)*p0); // r0_dot / r0.T * mpA * r0
+        alpha = r0_dot / ((mpA*p0)*p0); // r0_dot / p0.T * mpA * p0
         //update solution
         x0 = x0_temp + alpha*p0; // x0_temp + alpha * p0
         x0_temp = x0;
