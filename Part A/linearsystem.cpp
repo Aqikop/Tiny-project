@@ -62,3 +62,14 @@ Vector LinearSystem::Solve() {
         return ((*mpA).pseudo_inverse() * (*mpb))
     }
 }
+
+Vector LinearSystem::Solve(double lambda) {
+    if(mpA->getNumRows() > mpA->getNumCols()){
+        //for overdetermined
+        return ((*mpA).pseudo_inverse(lambda) * (*mpb))
+    }
+    else{
+        //for underdetermined
+        return ((*mpA).pseudo_inverse(lambda) * (*mpb))
+    }
+}

@@ -236,11 +236,18 @@ Matrix Matrix::tranpose() const {
     return trans_matrix;
 }
 // Pseudo inverse (Ref: chat GPT)
-Matrix Matrix::pseudo_inverse() const {
+Matrix Matrix::pseudo_inverse(double lamba = 0) const {
     if (mNumRows >= mNumCols) {
         // Tall or square matrix: A⁺ = (AᵀA)⁻¹Aᵀ
         Matrix A_trans = this->tranpose();
         Matrix AtA = A_trans * (*this);
+        //creat a identity matrix with same size of mNumcols x mNumcols
+        Matrix I(mNumCols, mNumCols);
+        for(int i = 1; i <= mNumCols; i++){
+            I(i,i) = 1;
+        }
+        //calculate the psuedo inverse with Tikhonov regularization
+        Matrix AtA = AtA + (I)*(lambda);
         
         if (fabs(AtA.determinant()) < 1e-12) {
             std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
@@ -253,6 +260,13 @@ Matrix Matrix::pseudo_inverse() const {
         // Wide matrix: A⁺ = Aᵀ(AAᵀ)⁻¹
         Matrix A_trans = this->tranpose();
         Matrix AAt = (*this) * A_trans;
+        //creat a identity matrix with same size of mNumcols x mNumcols
+        Matrix I(mNumCols, mNumCols);
+                for(int i = 1; i <= mNumCols; i++){
+            I(i,i) = 1;
+        }
+        //calculate the psuedo inverse with Tikhonov regularization
+        Matrix AtA = AtA + (I)*(lambda);
         
         if (fabs(AAt.determinant()) < 1e-12) {
             std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
