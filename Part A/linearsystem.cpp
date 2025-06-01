@@ -55,8 +55,10 @@ Vector LinearSystem::Solve() {
     }
     else if(mpA->getNumRows() > mpA->getNumCols()){
         //for overdetermined
+        return ((*mpA).pseudo_inverse() * (*mpb))
     }
     else{
         //for underdetermined
+        return ((*mpA).pseudo_inverse() * (*mpb))
     }
 }
