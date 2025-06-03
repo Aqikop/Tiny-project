@@ -9,7 +9,7 @@ using namespace std;
 
 LinearSystem::LinearSystem(Matrix* A, Vector* b) : mpA(A), mpb(b) {
     mSize = A->getNumRows();
-    assert(A->getNumRows() == A->getNumCols());//may need remove
+    //assert(A->getNumRows() == A->getNumCols());//may need remove
 }
 //Solve Method: (Reference: Copilot)
 Vector LinearSystem::Solve() {
@@ -55,21 +55,41 @@ Vector LinearSystem::Solve() {
     }
     else if(mpA->getNumRows() > mpA->getNumCols()){
         //for overdetermined
-        return ((*mpA).pseudo_inverse() * (*mpb))
+        return ((*mpA).pseudo_inverse() * (*mpb));
     }
     else{
         //for underdetermined
-        return ((*mpA).pseudo_inverse() * (*mpb))
+        return ((*mpA).pseudo_inverse() * (*mpb));
     }
 }
 
 Vector LinearSystem::Solve(double lambda) {
     if(mpA->getNumRows() > mpA->getNumCols()){
         //for overdetermined
-        return ((*mpA).pseudo_inverse(lambda) * (*mpb))
+        return ((*mpA).pseudo_inverse(lambda) * (*mpb));
     }
     else{
         //for underdetermined
-        return ((*mpA).pseudo_inverse(lambda) * (*mpb))
+        return ((*mpA).pseudo_inverse(lambda) * (*mpb));
     }
+}
+//test
+int main()
+{
+    cout <<"test";
+    Matrix m(2,3);
+    m(1,1) = 1;
+    m(1,2) = 2;
+    m(1,3) = -1;
+    m(2,1) = 3;
+    m(2,2) = -1;
+    m(2,3) = 2;
+    Vector k(2);
+    k[0] = 1;
+    k[1] = 5;
+    LinearSystem A(&m, &k);
+    Vector x = A.Solve(1);
+    cout << "\n"<<x[0];
+    cout << "\n"<<x[1];
+    cout << "\n"<<x[2];
 }

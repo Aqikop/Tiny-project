@@ -44,6 +44,7 @@ int Matrix::getNumRows() const{
 int Matrix::getNumCols() const{
     return mNumCols;
 }
+
 // Overloadding Operator: ()
 double &Matrix::operator()(int row, int col){
     return mData[row - 1][col - 1];
@@ -236,7 +237,7 @@ Matrix Matrix::tranpose() const {
     return trans_matrix;
 }
 // Pseudo inverse (Ref: chat GPT)
-Matrix Matrix::pseudo_inverse(double lamba = 0) const {
+Matrix Matrix::pseudo_inverse(double lambda) const {
     if (mNumRows >= mNumCols) {
         // Tall or square matrix: A⁺ = (AᵀA)⁻¹Aᵀ
         Matrix A_trans = this->tranpose();
@@ -247,13 +248,13 @@ Matrix Matrix::pseudo_inverse(double lamba = 0) const {
             I(i,i) = 1;
         }
         //calculate the psuedo inverse with Tikhonov regularization
-        Matrix AtA = AtA + (I)*(lambda);
+        Matrix temp2 = AtA + (I)*(lambda);
         
-        if (fabs(AtA.determinant()) < 1e-12) {
+        if (fabs(temp2.determinant()) < 1e-12) {
             std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
             return Matrix(mNumCols, mNumRows);
         }
-        Matrix AtA_inv = AtA.inverse();
+        Matrix AtA_inv = temp2.inverse();
         return AtA_inv * A_trans;
     } 
     else {
@@ -261,105 +262,105 @@ Matrix Matrix::pseudo_inverse(double lamba = 0) const {
         Matrix A_trans = this->tranpose();
         Matrix AAt = (*this) * A_trans;
         //creat a identity matrix with same size of mNumcols x mNumcols
-        Matrix I(mNumCols, mNumCols);
-                for(int i = 1; i <= mNumCols; i++){
+        Matrix I(mNumRows, mNumRows);
+        for(int i = 1; i <= mNumRows; i++){
             I(i,i) = 1;
         }
         //calculate the psuedo inverse with Tikhonov regularization
-        Matrix AtA = AtA + (I)*(lambda);
-        
-        if (fabs(AAt.determinant()) < 1e-12) {
+        Matrix temp2 = AAt + (I)*(lambda);
+        if (fabs(temp2.determinant()) < 1e-12) {
             std::cerr << "Matrix is rank deficient, pseudo-inverse cannot be computed\n";
             return Matrix(mNumCols, mNumRows);
         }
-        Matrix AAt_inv = AAt.inverse();
+        Matrix AAt_inv = temp2.inverse();
+        Matrix temp = A_trans * AAt_inv;
         return A_trans * AAt_inv;
     }
 }
 
 
 //Testing code provided by chatgpt, uncomment to test the each function
-int main(){
-    // Test constructor and getNumRows/getNumCols
-    Matrix m1(2, 3);
-    std::cout << "Rows: " << m1.getNumRows() << ", Cols: " << m1.getNumCols() << std::endl;
+// int main(){
+//     // Test constructor and getNumRows/getNumCols
+//     Matrix m1(2, 3);
+//     std::cout << "Rows: " << m1.getNumRows() << ", Cols: " << m1.getNumCols() << std::endl;
 
-    // Test operator()
-    m1(1, 1) = 5;
-    m1(1, 2) = 6;
-    m1(2, 1) = 7;
-    std::cout << "m1(1,1): " << m1(1, 1) << ", m1(2,1): " << m1(2, 1) << std::endl;
+//     // Test operator()
+//     m1(1, 1) = 5;
+//     m1(1, 2) = 6;
+//     m1(2, 1) = 7;
+//     std::cout << "m1(1,1): " << m1(1, 1) << ", m1(2,1): " << m1(2, 1) << std::endl;
 
-    // Test copy constructor
-    Matrix m2 = m1;
-    std::cout << "Copy m2(1,1): " << m2(1, 1) << std::endl;
+//     // Test copy constructor
+//     Matrix m2 = m1;
+//     std::cout << "Copy m2(1,1): " << m2(1, 1) << std::endl;
 
-    // Test unary +
-    Matrix m3 = +m1;
-    std::cout << "Unary + m3(1,1): " << m3(1, 1) << std::endl;
+//     // Test unary +
+//     Matrix m3 = +m1;
+//     std::cout << "Unary + m3(1,1): " << m3(1, 1) << std::endl;
 
-    // Test unary -
-    Matrix m4 = -m1;
-    std::cout << "Unary - m4(1,1): " << m4(1, 1) << std::endl;
+//     // Test unary -
+//     Matrix m4 = -m1;
+//     std::cout << "Unary - m4(1,1): " << m4(1, 1) << std::endl;
 
-    // Test operator+ (addition)
-    Matrix m5(2, 3);
-    m5(1, 1) = 1;
-    m5(2, 1) = 2;
-    Matrix m6 = m1 + m5;
-    std::cout << "Addition m6(1,1): " << m6(1, 1) << std::endl;
+//     // Test operator+ (addition)
+//     Matrix m5(2, 3);
+//     m5(1, 1) = 1;
+//     m5(2, 1) = 2;
+//     Matrix m6 = m1 + m5;
+//     std::cout << "Addition m6(1,1): " << m6(1, 1) << std::endl;
 
-    // Test operator- (subtraction)
-    Matrix m7 = m1 - m5;
-    std::cout << "Subtraction m7(1,1): " << m7(1, 1) << std::endl;
+//     // Test operator- (subtraction)
+//     Matrix m7 = m1 - m5;
+//     std::cout << "Subtraction m7(1,1): " << m7(1, 1) << std::endl;
 
-    // Test operator* (scalar)
-    Matrix m8 = m1 * 2.0;
-    std::cout << "Scalar multiply m8(1,1): " << m8(1, 1) << std::endl;
+//     // Test operator* (scalar)
+//     Matrix m8 = m1 * 2.0;
+//     std::cout << "Scalar multiply m8(1,1): " << m8(1, 1) << std::endl;
 
-    // Test operator* (matrix multiplication)
-    Matrix a(2, 2);
-    Matrix b(2, 2);
-    a(1, 1) = 1; a(1, 2) = 2; a(2, 1) = 3; a(2, 2) = 4;
-    b(1, 1) = 2; b(1, 2) = 0; b(2, 1) = 1; b(2, 2) = 2;
-    Matrix c = a * b;
-    std::cout << "Matrix multiply c(1,1): " << c(1, 1) << std::endl;
+//     // Test operator* (matrix multiplication)
+//     Matrix a(2, 2);
+//     Matrix b(2, 2);
+//     a(1, 1) = 1; a(1, 2) = 2; a(2, 1) = 3; a(2, 2) = 4;
+//     b(1, 1) = 2; b(1, 2) = 0; b(2, 1) = 1; b(2, 2) = 2;
+//     Matrix c = a * b;
+//     std::cout << "Matrix multiply c(1,1): " << c(1, 1) << std::endl;
 
-    // Test Matrix * Vector (column vector)
-    Matrix mat1(2, 3);
-    mat1(1, 1) = 1; mat1(1, 2) = 2; mat1(1, 3) = 3;
-    mat1(2, 1) = 4; mat1(2, 2) = 5; mat1(2, 3) = 6;
-    Vector vec1(3);
-    vec1[0] = 1; vec1[1] = 0; vec1[2] = -1;
-    Vector result1 = mat1 * vec1;
-    std::cout << "Matrix * Vector result: [" << result1[0] << ", " << result1[1] << "]" << std::endl;
-    // Expected: [1*1 + 2*0 + 3*(-1) = -2, 4*1 + 5*0 + 6*(-1) = -2]
+//     // Test Matrix * Vector (column vector)
+//     Matrix mat1(2, 3);
+//     mat1(1, 1) = 1; mat1(1, 2) = 2; mat1(1, 3) = 3;
+//     mat1(2, 1) = 4; mat1(2, 2) = 5; mat1(2, 3) = 6;
+//     Vector vec1(3);
+//     vec1[0] = 1; vec1[1] = 0; vec1[2] = -1;
+//     Vector result1 = mat1 * vec1;
+//     std::cout << "Matrix * Vector result: [" << result1[0] << ", " << result1[1] << "]" << std::endl;
+//     // Expected: [1*1 + 2*0 + 3*(-1) = -2, 4*1 + 5*0 + 6*(-1) = -2]
 
-    // Test Vector * Matrix (row vector)
-    Vector vec2(2);
-    vec2[0] = 2; vec2[1] = 3;
-    Matrix mat2(2, 3);
-    mat2(1, 1) = 1; mat2(1, 2) = 2; mat2(1, 3) = 3;
-    mat2(2, 1) = 4; mat2(2, 2) = 5; mat2(2, 3) = 6;
-    Vector result2 = vec2 * mat2;
-    std::cout << "Vector * Matrix result: [" << result2[0] << ", " << result2[1] << ", " << result2[2] << "]" << std::endl;
+//     // Test Vector * Matrix (row vector)
+//     Vector vec2(2);
+//     vec2[0] = 2; vec2[1] = 3;
+//     Matrix mat2(2, 3);
+//     mat2(1, 1) = 1; mat2(1, 2) = 2; mat2(1, 3) = 3;
+//     mat2(2, 1) = 4; mat2(2, 2) = 5; mat2(2, 3) = 6;
+//     Vector result2 = vec2 * mat2;
+//     std::cout << "Vector * Matrix result: [" << result2[0] << ", " << result2[1] << ", " << result2[2] << "]" << std::endl;
 
-    // Test determinant
-    Matrix detMat(2, 2);
-    detMat(1, 1) = 1; detMat(1, 2) = 2; detMat(2, 1) = 3; detMat(2, 2) = 4;
-    std::cout << "Determinant: " << detMat.determinant() << std::endl;
+//     // Test determinant
+//     Matrix detMat(2, 2);
+//     detMat(1, 1) = 1; detMat(1, 2) = 2; detMat(2, 1) = 3; detMat(2, 2) = 4;
+//     std::cout << "Determinant: " << detMat.determinant() << std::endl;
 
-    // Test inverse (check)
-    Matrix invMat = detMat.inverse();
-    std::cout << "Inverse invMat(1,1): " << invMat(1, 1) << std::endl;
+//     // Test inverse (check)
+//     Matrix invMat = detMat.inverse();
+//     std::cout << "Inverse invMat(1,1): " << invMat(1, 1) << std::endl;
 
-    // Test transpose
-    Matrix tMat = detMat.tranpose();
-    std::cout << "Transpose tMat(1,2): " << tMat(1, 2) << std::endl;
+//     // Test transpose
+//     Matrix tMat = detMat.tranpose();
+//     std::cout << "Transpose tMat(1,2): " << tMat(1, 2) << std::endl;
 
-    // Test pseudo-inverse (check)
-    Matrix pinv = detMat.pseudo_inverse();
-    std::cout << "Pseudo-inverse pinv(1,1): " << pinv(1, 1) << std::endl;
+//     // Test pseudo-inverse (check)
+//     Matrix pinv = detMat.pseudo_inverse();
+//     std::cout << "Pseudo-inverse pinv(1,1): " << pinv(1, 1) << std::endl;
 
-    return 0;
-}
+//     return 0;
+// }
