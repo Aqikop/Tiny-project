@@ -76,7 +76,6 @@ Vector LinearSystem::Solve(double lambda) {
 //test
 int main()
 {
-    cout <<"test";
     Matrix m(2,3);
     m(1,1) = 1;
     m(1,2) = 2;
@@ -88,8 +87,25 @@ int main()
     k[0] = 1;
     k[1] = 5;
     LinearSystem A(&m, &k);
-    Vector x = A.Solve(1);
+    Vector x = A.Solve(0);
+    cout <<"Test 1:";
     cout << "\n"<<x[0];
     cout << "\n"<<x[1];
     cout << "\n"<<x[2];
+    cout << "\nTest 2:";
+    Matrix o(3,2);
+    o(1,1) = 1;
+    o(1,2) = 1;
+    o(2,1) = 2;
+    o(2,2) = 1;
+    o(3,1) = 1;
+    o(3,2) = 2;
+    Vector p(3);
+    p[0] = 3;
+    p[1] = 4;
+    p[2] = 1;
+    LinearSystem B(&o, &p);
+    Vector y = B.Solve(0);
+    cout << "\n"<<y[0];
+    cout << "\n"<<y[1];
 }

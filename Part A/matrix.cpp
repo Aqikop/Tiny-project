@@ -273,7 +273,6 @@ Matrix Matrix::pseudo_inverse(double lambda) const {
             return Matrix(mNumCols, mNumRows);
         }
         Matrix AAt_inv = temp2.inverse();
-        Matrix temp = A_trans * AAt_inv;
         return A_trans * AAt_inv;
     }
 }
