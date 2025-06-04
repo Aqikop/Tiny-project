@@ -1,5 +1,6 @@
 #include <iostream>
 #include "vector.h"
+#include <cmath>
 using namespace std;
 
 Vector:: Vector() : mSize(0), mData(nullptr) {
@@ -130,6 +131,19 @@ double Vector:: operator[](int index) const{
 Vector operator*(double scalar, const Vector& v2){
     return v2 * scalar;
 };
+
+double Vector:: magnitude() const{
+    double sum = 0.0;
+    for(int i = 0; i < mSize; i++){
+        sum += mData[i] * mData[i];
+    }
+    return sqrt(sum); 
+}
+
+double distance(const Vector& v1, const Vector& v2){
+    Vector diff = v1 - v2;
+    return diff.magnitude();
+}
 
 
 void printVector(const Vector& v, string name) {

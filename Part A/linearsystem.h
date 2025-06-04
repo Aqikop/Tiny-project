@@ -13,6 +13,7 @@ public:
     LinearSystem() = delete; 
     LinearSystem(Matrix* A, Vector* b);
     virtual Vector Solve();
+    Vector Solve(double lambda);
 };
 
 #endif 
