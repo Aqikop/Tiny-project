@@ -1,5 +1,6 @@
 #include <iostream>
 #include "vector.h"
+#include <cmath>
 using namespace std;
 
 Vector:: Vector() : mSize(0), mData(nullptr) {

@@ -15,7 +15,7 @@ public:
     ~Matrix();
     int getNumRows() const;
     int getNumCols() const;
-    int getData(int row, int col) const { return mData[row][col];}
+    double getData(int row, int col) const { return mData[row][col];}
     double &operator()(int, int);
 
     Matrix operator+() const;
@@ -28,7 +28,7 @@ public:
     double determinant() const;
     Matrix inverse() const;
     Matrix tranpose() const;
-    Matrix pseudo_inverse() const;
+    Matrix pseudo_inverse(double lambda = 0) const;
 };
 Vector operator*(const Matrix& m, const Vector& v); //row mul
 Vector operator*(const Vector& v, const Matrix& m); //col mul
