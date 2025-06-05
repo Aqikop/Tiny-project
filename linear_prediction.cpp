@@ -238,5 +238,5 @@ int main(){
     return 0;
 }
 
-// g++ -o test test.cpp "Part A/matrix.cpp" "Part A/vector.cpp" -I"Part A"
+// g++ -o test linear_prediction.cpp "Part A/matrix.cpp" "Part A/vector.cpp" -I"Part A"
 // ./test
